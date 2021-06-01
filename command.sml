@@ -30,6 +30,13 @@ fun optionSetFold merge state [] = state
 
 type optset = (string * string list list) list;
 
+fun reduceNoNonOption (set: optset) =
+    optionSetFold
+        (fn (_, name, _) => if name = "" then
+                                raise Usage "No arguments expected"
+                            else ())
+        () set;
+
 fun reducePresent optName (set: optset) =
     optionSetFold
         (fn (present, name, _) => if name = optName then true else present)
