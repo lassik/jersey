@@ -152,13 +152,14 @@ fun optionSetFromArgs (opts: (string list * int) list)
         opts
         args;
 
-fun exitFailure message = (print ("Cannot happen: " ^ message ^ "\n");
-                           OS.Process.failure);
+fun exitFailure prefix message = (print (prefix ^ ": " ^ message ^ "\n");
+                                  OS.Process.failure);
 
 fun mainWithArgs (mainOnInvocation, invocationFromOpts, opts) args =
-    mainOnInvocation (invocationFromOpts (optionSetFromArgs opts args))
-    handle Usage e => exitFailure e
-         | CannotHappen e => exitFailure e;
+    OS.Process.exit
+        (mainOnInvocation (invocationFromOpts (optionSetFromArgs opts args)))
+    handle Usage e => exitFailure "Usage" e
+         | CannotHappen e => exitFailure "Cannot happen" e;
 
 fun main command =
     mainWithArgs command (CommandLine.arguments ());
