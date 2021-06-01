@@ -37,6 +37,16 @@ fun reduceNoNonOption (set: optset) =
                             else ())
         () set;
 
+fun reduceOptionalArg (set: optset) =
+    optionSetFold
+        (fn (lastValue, name, values) =>
+            if name = "" then
+                case values
+                 of [[value]] => SOME value
+                  | _ => raise CannotHappen "Too many arguments"
+            else lastValue)
+        NONE set;
+
 fun reducePresent optName (set: optset) =
     optionSetFold
         (fn (present, name, _) => if name = optName then true else present)
